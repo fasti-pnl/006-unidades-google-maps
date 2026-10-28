@@ -1,1 +1,3 @@
 # 006-unidades-google-maps
+
+EM BREVE POSTAREMOS AQUI TODAS AS REGRAS
