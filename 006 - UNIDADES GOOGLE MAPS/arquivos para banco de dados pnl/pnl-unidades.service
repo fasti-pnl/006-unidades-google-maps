@@ -1,0 +1,19 @@
+[Unit]
+Description=Servico da Aplicacao de Gestao de Unidades Google Maps - PNL
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+WorkingDirectory=/var/www/pnl-unidades-maps
+ExecStart=/usr/bin/node server.js
+Restart=always
+RestartSec=10
+EnvironmentFile=/var/www/pnl-unidades-maps/.env
+
+# Limites de seguranca
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

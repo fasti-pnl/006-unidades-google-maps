@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relação de Unidades - Prefeitura Municipal de Nova Lima</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            blue: '#005CA9',
+                            teal: '#00A896',
+                            orange: '#F26522',
+                            magenta: '#E5007D',
+                            purple: '#6B2C91',
+                            dark: '#0F172A'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-header {
+            background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+        }
+        .star-rating {
+            color: #F59E0B;
+        }
+        .table-row-hover:hover {
+            background-color: #F8FAFC;
+        }
+
+        /* Ocultar barra vertical em elementos onde não seja necessária */
+        html, body {
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+
+        /* Barra de rolagem horizontal elegante e discreta */
+        .overflow-x-auto::-webkit-scrollbar {
+            height: 6px;
+        }
+        .overflow-x-auto::-webkit-scrollbar-track {
+            background: #F1F5F9;
+            border-radius: 9999px;
+        }
+        .overflow-x-auto::-webkit-scrollbar-thumb {
+            background: #CBD5E1;
+            border-radius: 9999px;
+        }
+        .overflow-x-auto::-webkit-scrollbar-thumb:hover {
+            background: #94A3B8;
+        }
+
+        /* Suporte para Firefox */
+        .overflow-x-auto {
+            scrollbar-width: thin;
+            scrollbar-color: #CBD5E1 #F1F5F9;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 font-sans text-slate-800 antialiased min-h-screen flex flex-col">
+
+    <!-- HEADER PRINCIPAL -->
+    <header class="gradient-header text-white border-b border-slate-700 shadow-xl">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+                <!-- LOGO E TÍTULO -->
+                <div class="flex items-center gap-5">
+                    <div class="bg-white p-2.5 rounded-2xl shadow-lg flex items-center justify-center shrink-0 w-16 h-16 sm:w-20 sm:h-20 border border-slate-100">
+                        <img src="assets/img/PrefeituraNovaLIma-300x300.webp" alt="Logo Prefeitura de Nova Lima" class="w-full h-full object-contain">
+                    </div>
+                    <div>
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/20 text-blue-300 border border-blue-500/30 mb-2">
+                            <span class="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span>
+                            Gestão do Perfil no Google Maps
+                        </div>
+                        <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white uppercase leading-tight">
+                            Relação de Unidades da Prefeitura Municipal de Nova Lima
+                        </h1>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARDS DE RESUMO (MÉTRICAS) -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
+                <div class="bg-slate-800/80 backdrop-blur-md p-4 rounded-xl border border-slate-700/60 shadow-sm">
+                    <div class="flex items-center gap-3">
+                        <div class="p-3 bg-blue-500/20 text-blue-400 rounded-lg">
+                            <i class="fa-solid fa-building text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs uppercase font-semibold text-slate-400">Total de Unidades</p>
+                            <p id="total-units-count" class="text-2xl font-bold text-white">0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-800/80 backdrop-blur-md p-4 rounded-xl border border-slate-700/60 shadow-sm">
+                    <div class="flex items-center gap-3">
+                        <div class="p-3 bg-amber-500/20 text-amber-400 rounded-lg">
+                            <i class="fa-solid fa-star text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs uppercase font-semibold text-slate-400">Média Avaliação</p>
+                            <p id="avg-rating" class="text-2xl font-bold text-white">0.0 ★</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-800/80 backdrop-blur-md p-4 rounded-xl border border-slate-700/60 shadow-sm">
+                    <div class="flex items-center gap-3">
+                        <div class="p-3 bg-orange-500/20 text-orange-400 rounded-lg">
+                            <i class="fa-solid fa-user-shield text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs uppercase font-semibold text-slate-400">Pendentes de Reivindicação</p>
+                            <p id="pending-claims" class="text-2xl font-bold text-white">0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-800/80 backdrop-blur-md p-4 rounded-xl border border-slate-700/60 shadow-sm">
+                    <div class="flex items-center gap-3">
+                        <div class="p-3 bg-purple-500/20 text-purple-400 rounded-lg">
+                            <i class="fa-solid fa-layer-group text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs uppercase font-semibold text-slate-400">Categorias</p>
+                            <p id="categories-count" class="text-2xl font-bold text-white">0</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full">
+
+        <!-- PAINEL DE CONTROLES E FILTROS -->
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200/80 mb-6 space-y-4">
+            
+            <!-- PESQUISA E SELETORES -->
+            <div class="flex flex-col md:flex-row gap-4 justify-between items-center">
+                <!-- BUSCA TEXTUAL -->
+                <div class="relative w-full md:w-96">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                    <input type="text" id="search-input" placeholder="Buscar por nome, endereço ou bairro..." 
+                        class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all">
+                </div>
+
+                <!-- FILTROS DE STATUS E NOTA -->
+                <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
+                    <select id="status-filter" class="px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="ALL">Cadastrados</option>
+                        <option value="Reivindicado">Reivindicados</option>
+                        <option value="Pendente">Pendentes de Reivindicação</option>
+                        <option value="Não cadastrado">Não Cadastrados</option>
+                    </select>
+
+                    <select id="rating-filter" class="px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="ALL">Todas as Notas</option>
+                        <option value="4.5">4.5 ou superior ★</option>
+                        <option value="4.0">4.0 ou superior ★</option>
+                        <option value="3.0">Abaixo de 4.0 ★</option>
+                    </select>
+
+                    <button id="reset-filters" title="Limpar filtros" class="w-10 h-10 flex items-center justify-center text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors shrink-0">
+                        <i class="fa-solid fa-rotate-right text-sm"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- TABS DE CATEGORIAS -->
+            <div class="flex items-center gap-2 overflow-x-auto pt-2 border-t border-slate-100 no-scrollbar" id="category-tabs">
+                <!-- Gerado dinamicamente via JS -->
+            </div>
+        </div>
+
+        <!-- TABELA DE DADOS -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-50 border-b border-slate-200 text-xs font-bold text-slate-500 uppercase tracking-wider">
+                            <th class="py-4 px-6 cursor-pointer hover:bg-slate-100 transition-colors" onclick="sortTable('name')">
+                                EQUIPAMENTO <i class="fa-solid fa-sort ml-1 text-slate-400"></i>
+                            </th>
+                            <th class="py-4 px-6 cursor-pointer hover:bg-slate-100 transition-colors" onclick="sortTable('mapsName')">
+                                GOOGLE MAPS <i class="fa-solid fa-sort ml-1 text-slate-400"></i>
+                            </th>
+                            <th class="py-4 px-6">ENDEREÇO</th>
+                            <th class="py-4 px-6">TELEFONE</th>
+                            <th class="py-4 px-6 cursor-pointer hover:bg-slate-100 transition-colors" onclick="sortTable('rating')">
+                                AVALIAÇÃO <i class="fa-solid fa-sort ml-1 text-slate-400"></i>
+                            </th>
+                            <th class="py-4 px-6 cursor-pointer hover:bg-slate-100 transition-colors" onclick="sortTable('status')">
+                                STATUS <i class="fa-solid fa-sort ml-1 text-slate-400"></i>
+                            </th>
+                            <th class="py-4 px-6 text-center">LINK</th>
+                        </tr>
+                    </thead>
+                    <tbody id="units-table-body" class="divide-y divide-slate-100 text-sm font-medium">
+                        <!-- Conteúdo injetado via JS -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- ESTADO VAZIO -->
+            <div id="empty-state" class="hidden p-12 text-center">
+                <div class="w-16 h-16 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </div>
+                <h3 class="text-base font-bold text-slate-800">Nenhuma unidade encontrada</h3>
+                <p class="text-slate-500 text-sm mt-1">Tente ajustar seus termos de busca ou remover os filtros aplicados.</p>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-white border-t border-slate-200 py-6 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500">
+            <p>© Prefeitura Municipal de Nova Lima — Mapeamento do Perfil Institucional no Google Maps</p>
+        </div>
+    </footer>
+
+    <!-- SCRIPT DE DADOS E LÓGICA -->
+    <script>
+        const unitsData = [
+            // SEDES
+            { id: 1, category: 'Sedes Administrativas', name: 'Sede da Prefeitura Municipal', mapsName: 'Prefeitura Municipal de Nova Lima', address: 'Praça Bernardino de Lima, 80 - Centro', phone: '(31) 3180-5760', rating: 4.3, reviews: 142, status: 'Pendente', mapsUrl: 'https://maps.google.com/?q=Prefeitura+Municipal+de+Nova+Lima' },
+            {"name":"SEMAM - Secretaria Municipal de Meio Ambiente","mapsName":"SEMAM - Secretaria Municipal de Meio Ambiente","address":"Rua Domingos Rodrigues, 243 (6º andar) - Centro / Olaria","phone":"(31) 3180-5847 / 3180-5839","rating":1.8,"reviews":5,"status":"Pendente","category":"Sedes Administrativas","mapsUrl":"https://www.google.com/maps/search/?api=1&query=SEMAM+Secretaria+Municipal+de+Meio+Ambiente+Nova+Lima","id":600},
+            {"name":"Secretaria Municipal de Cultura","mapsName":"Secretaria Municipal de Cultura de Nova Lima (Casa de Cultura)","address":"Av. Rio Branco, 308 - Centro","phone":"(31) 3180-5856","rating":4.6,"reviews":14,"status":"Pendente","category":"Sedes Administrativas","mapsUrl":"https://www.google.com/maps/search/?api=1&query=Secretaria+Municipal+de+Cultura+Nova+Lima","id":601},
+            {"name":"Secretaria Municipal de Esporte e Lazer (SEMEL)","mapsName":"Secretaria de Esporte e Lazer - Nova Lima","address":"Rua Melo Viana, 174 - Centro","phone":"(31) 3180-5880","rating":4.5,"reviews":12,"status":"Pendente","category":"Sedes Administrativas","mapsUrl":"https://www.google.com/maps/search/?api=1&query=Secretaria+Municipal+de+Esporte+e+Lazer+Nova+Lima","id":602},
+            {"name":"Secretaria Municipal de Desenvolvimento Social (SEMDS)","mapsName":"Secretaria Municipal de Desenvolvimento Social de Nova Lima","address":"Rua Chalmers, 91 - Centro","phone":"(31) 3180-5928","rating":4.2,"reviews":16,"status":"Pendente","category":"Sedes Administrativas","mapsUrl":"https://www.google.com/maps/search/?api=1&query=Secretaria+Municipal+de+Desenvolvimento+Social+Nova+Lima","id":603},
+            {"name":"Secretaria Municipal de Segurança e Mobilidade Urbana (SEMOB)","mapsName":"Secretaria Municipal de Segurança e Mobilidade Urbana","address":"Rua Edgar Cassemiro, 71 - Oswaldo Barbosa Pena","phone":"(31) 3180-5980","rating":4.4,"reviews":18,"status":"Pendente","category":"Sedes Administrativas","mapsUrl":"https://www.google.com/maps/search/?api=1&query=Secretaria+Municipal+de+Seguran%C3%A7a+e+Mobilidade+Urbana+Nova+Lima","id":604},
+            {"name":"Secretaria Municipal de Habitação","mapsName":"Secretaria Municipal de Habitação de Nova Lima","address":"Praça Dr. Antonino Fonseca Junior, 08 - Centro","phone":"(31) 3180-5878","rating":4.3,"reviews":8,"status":"Pendente","category":"Sedes Administrativas","mapsUrl":"https://www.google.com/maps/search/?api=1&query=Secretaria+Municipal+de+Habita%C3%A7%C3%A3o+Nova+Lima","id":605},
+            {"name":"Secretaria Municipal de Fazenda","mapsName":"Secretaria Municipal de Fazenda - Nova Lima","address":"Praça Bernardino de Lima, 80 - Centro","phone":"(31) 3180-5801","rating":4.1,"reviews":21,"status":"Pendente","category":"Sedes Administrativas","mapsUrl":"https://www.google.com/maps/search/?api=1&query=Secretaria+Municipal+de+Fazenda+Nova+Lima","id":606},
+            {"name":"Secretaria Municipal de Planejamento e Gestão (SEMPG)","mapsName":"Secretaria de Planejamento e Gestão - Nova Lima","address":"Praça Bernardino de Lima, 80 - Centro","phone":"(31) 3180-5760","rating":4.2,"reviews":11,"status":"Pendente","category":"Sedes Administrativas","mapsUrl":"https://www.google.com/maps/search/?api=1&query=Secretaria+de+Planejamento+Prefeitura+de+Nova+Lima","id":607},
+            { id: 2, category: 'Sedes Administrativas', name: 'Secretaria Municipal de Saúde', mapsName: 'Secretaria Municipal de Saúde de Nova Lima', address: 'Rua Padre João Marcelino, 110 - Oswaldo Barbosa Pena II', phone: '(31) 3180-6070', rating: 3.8, reviews: 45, status: 'Pendente', mapsUrl: 'https://maps.google.com/?q=Secretaria+Municipal+de+Saúde+de+Nova+Lima' },
+            { id: 3, category: 'Sedes Administrativas', name: 'Secretaria Municipal de Educação', mapsName: 'Secretaria Municipal de Educação', address: 'R. Dr. Lund, 33 - Centro', phone: '(31) 3180-5800', rating: 4.5, reviews: 28, status: 'Pendente', mapsUrl: 'https://maps.google.com/?q=Secretaria+Municipal+de+Educação+Nova+Lima' },
+            { id: 4, category: 'Sedes Administrativas', name: 'Secretaria de Obras e Serviços Urbanos', mapsName: 'Secretaria Municipal de Obras e Serviços Urbanos', address: 'Praça Bernardino de Lima, 80 - Centro', phone: '(31) 3180-5898', rating: 4.0, reviews: 19, status: 'Pendente', mapsUrl: 'https://maps.google.com/?q=Secretaria+Municipal+de+Obras+Nova+Lima' },
+            { id: 5, category: 'Sedes Administrativas', name: 'Guarda Civil Municipal / Defesa Civil', mapsName: 'Guarda Municipal de Nova Lima', address: 'R. Melo Viana, 230 - Centro', phone: '(31) 3180-5980', rating: 4.6, reviews: 64, status: 'Pendente', mapsUrl: 'https://maps.google.com/?q=Guarda+Municipal+de+Nova+Lima' },
+
+            // SAÚDE
+            { id: 6, category: 'Saúde', name: 'UPA 24h', mapsName: 'UPA 24h Nova Lima', address: 'R. José Agostinho, 2200 - Chácara Bom Retiro', phone: '(31) 3180-6183', rating: 3.2, reviews: 310, status: 'Pendente', mapsUrl: 'https://maps.google.com/?q=UPA+24h+Nova+Lima' },
+            {"name":"UBS Mingu","mapsName":"UBS Mingu","address":"R. José do Carmo, 80 - Mingu","phone":"(31) 3542-8181","rating":4.5,"reviews":6,"status":"Pendente","category":"Saúde","mapsUrl":"https://www.google.com/maps/search/?api=1&query=UBS+Mingu+Nova+Lima","id":500},
+            {"name":"PA Jardim Canadá (Pronto Atendimento 24h)","mapsName":"Pronto Atendimento Jardim Canadá","address":"Rua Vancouver, 225 - Jardim Canadá","phone":"(31) 3541-8400","rating":3.8,"reviews":84,"status":"Pendente","category":"Saúde","mapsUrl":"https://www.google.com/maps/search/?api=1&query=Pronto+Atendimento+Jardim+Canada+Nova+Lima","id":501},
+            {"name":"UBS Jardim Canadá","mapsName":"Unidade Básica de Saúde Jardim Canadá","address":"Rua Dresden, 70 - Jardim Canadá","phone":"(31) 3581-3174","rating":4.2,"reviews":28,"status":"Pendente","category":"Saúde","mapsUrl":"https://www.google.com/maps/search/?api=1&query=UBS+Jardim+Canada+Nova+Lima","id":502},
+            {"name":"UBS Bela Fama","mapsName":"UBS Bela Fama","address":"Rua José de Oliveira, 926 - Bela Fama","phone":"(31) 3581-8446","rating":4.3,"reviews":19,"status":"Pendente","category":"Saúde","mapsUrl":"https://www.google.com/maps/search/?api=1&query=UBS+Bela+Fama+Nova+Lima","id":503},
+            {"name":"UBS Cascalho","mapsName":"UBS Cascalho","address":"Av. José Bernardo de Barros, 905 - Cascalho","phone":"(31) 3542-3770","rating":4.4,"reviews":22,"status":"Pendente","category":"Saúde","mapsUrl":"https://www.google.com/maps/search/?api=1&query=UBS+Cascalho+Nova+Lima","id":504},
+            {"name":"UBS Cristais","mapsName":"UBS Cristais","address":"Rua Cuiabá, 250 - Cristais","phone":"(31) 3541-7401","rating":4.5,"reviews":15,"status":"Pendente","category":"Saúde","mapsUrl":"https://www.google.com/maps/search/?api=1&query=UBS+Cristais+Nova+Lima","id":505},
+            {"name":"UBS Cruzeiro","mapsName":"UBS Cruzeiro","address":"Avenida Esmeraldas, 59 - Cruzeiro","phone":"(31) 3542-1783","rating":4.2,"reviews":31,"status":"Pendente","category":"Saúde","mapsUrl":"https://www.google.com/maps/search/?api=1&query=UBS+Cruzeiro+Nova+Lima","id":506},
+            {"name":"UBS Chácara Bom Retiro","mapsName":"UBS Chácara Bom Retiro","address":"Rua Geraldo Ferreira das Mercês, 195 - Chácara Bom Retiro","phone":"(31) 3541-6269","rating":4.3,"reviews":18,"status":"Pendente","category":"Saúde","mapsUrl":"https://www.google.com/maps/search/?api=1&query=UBS+Chacara+Bom+Retiro+Nova+Lima","id":507},
+            {"name":"UBS Galo","mapsName":"UBS Galo","address":"Rodovia MG-030, km 437 - Galo","phone":"(31) 3583-1144","rating":4.6,"reviews":12,"status":"Pendente","category":"Saúde","mapsUrl":"https://www.google.com/maps/search/?api=1&query=UBS+Galo+Nova+Lima","id":508},
+            {"name":"UBS José de Almeida","mapsName":"UBS José de Almeida","address":"Rua Dr. Lund, 200 - Centro","phone":"(31) 3581-7831","rating":4.1,"reviews":24,"status":"Pendente","category":"Saúde","mapsUrl":"https://www.google.com/maps/search/?api=1&query=UBS+Jose+de+Almeida+Nova+Lima","id":509},
+            {"name":"UBS Macacos (São Sebastião das Águas Claras)","mapsName":"UBS Macacos","address":"Rua Dona Maria da Glória, s/n - Macacos","phone":"(31) 3547-7377","rating":4.7,"reviews":25,"status":"Pendente","category":"Saúde","mapsUrl":"https://www.google.com/maps/search/?api=1&query=UBS+Macacos+Nova+Lima","id":510},
+            {"name":"UBS Nossa Senhora de Fátima","mapsName":"UBS Nossa Senhora de Fátima","address":"Rua José Bernardo de Barros, s/n - N. S. de Fátima","phone":"(31) 3542-3707","rating":4.3,"reviews":14,"status":"Pendente","category":"Saúde","mapsUrl":"https://www.google.com/maps/search/?api=1&query=UBS+Nossa+Senhora+de+Fatima+Nova+Lima","id":511},
+            {"name":"UBS Nova Suíça","mapsName":"UBS Nova Suíça","address":"Rua Suíça, 120 - Nova Suíça","phone":"(31) 3541-6362","rating":4.4,"reviews":16,"status":"Pendente","category":"Saúde","mapsUrl":"https://www.google.com/maps/search/?api=1&query=UBS+Nova+Suica+Nova+Lima","id":512},
+            {"name":"UBS Paula Fernandes Villela","mapsName":"UBS Paula Fernandes Villela","address":"Rua Ivanete Salomé, 20 - Vila São Luiz","phone":"(31) 3581-8448","rating":4.2,"reviews":20,"status":"Pendente","category":"Saúde","mapsUrl":"https://www.google.com/maps/search/?api=1&query=UBS+Paula+Fernandes+Villela+Nova+Lima","id":513},
+            {"name":"UBS Retiro","mapsName":"UBS Retiro","address":"Rua Miguel Couto, 89 - Centro / Retiro","phone":"(31) 3541-4539","rating":4.1,"reviews":27,"status":"Pendente","category":"Saúde","mapsUrl":"https://www.google.com/maps/search/?api=1&query=UBS+Retiro+Nova+Lima","id":514},
+            {"name":"UBS Rosário","mapsName":"UBS Rosário","address":"Rua Melo Viana, 500 - Rosário","phone":"(31) 3547-8990","rating":4.3,"reviews":22,"status":"Pendente","category":"Saúde","mapsUrl":"https://www.google.com/maps/search/?api=1&query=UBS+Rosario+Nova+Lima","id":515},
+            {"name":"UBS Santa Rita","mapsName":"UBS Santa Rita","address":"Rua Antônio de Paula Santos, 1008 - Santa Rita","phone":"(31) 3542-8780","rating":4.4,"reviews":19,"status":"Pendente","category":"Saúde","mapsUrl":"https://www.google.com/maps/search/?api=1&query=UBS+Santa+Rita+Nova+Lima","id":516},
+            {"name":"UBS Vale do Sol","mapsName":"UBS Vale do Sol","address":"Avenida Terra, 178 - Vale do Sol","phone":"(31) 3547-7315","rating":4.5,"reviews":21,"status":"Pendente","category":"Saúde","mapsUrl":"https://www.google.com/maps/search/?api=1&query=UBS+Vale+do+Sol+Nova+Lima","id":517},
+            {"name":"UBS Água Limpa","mapsName":"UBS Água Limpa","address":"Avenida dos Diplomatas, 40 - Água Limpa","phone":"(31) 98511-2017","rating":4.5,"reviews":13,"status":"Pendente","category":"Saúde","mapsUrl":"https://www.google.com/maps/search/?api=1&query=UBS+Agua+Limpa+Nova+Lima","id":518},
+            {"name":"CAPS AD (Álcool e Outras Drogas)","mapsName":"CAPS AD - Nova Lima","address":"Rua Benedito Valadares, 180 - Centro","phone":"(31) 3180-6095","rating":4.6,"reviews":18,"status":"Pendente","category":"Saúde","mapsUrl":"https://www.google.com/maps/search/?api=1&query=CAPS+AD+Nova+Lima","id":519},
+            {"name":"Centro de Especialidades Odontológicas (CEO)","mapsName":"Centro de Especialidades Odontológicas de Nova Lima","address":"Rua Doutor Lund, 115 - Centro","phone":"(31) 3180-6074","rating":4.4,"reviews":23,"status":"Pendente","category":"Saúde","mapsUrl":"https://www.google.com/maps/search/?api=1&query=Centro+de+Especialidades+Odontologicas+Nova+Lima","id":520},
+            {"name":"Posto de Coleta Hemominas (PACE Nova Lima)","mapsName":"PACE Hemominas Nova Lima","address":"Rua Benedito Valadares, 210 - Centro","phone":"(31) 3180-6085","rating":4.8,"reviews":35,"status":"Pendente","category":"Saúde","mapsUrl":"https://www.google.com/maps/search/?api=1&query=Hemominas+Nova+Lima","id":521},
+            { id: 7, category: 'Saúde', name: 'UBS Centro', mapsName: 'Unidade Básica de Saúde Centro - UBS Centro', address: 'R. Marquês de Sapucaí, 50 - Centro', phone: '(31) 3180-6080', rating: 4.1, reviews: 52, status: 'Pendente', mapsUrl: 'https://maps.google.com/?q=UBS+Centro+Nova+Lima' },
+            { id: 8, category: 'Saúde', name: 'UBS Cabeceiras', mapsName: 'UBS Cabeceiras', address: 'R. Francisco de Assis, 15 - Cabeceiras', phone: '(31) 3180-6090', rating: 4.4, reviews: 23, status: 'Pendente', mapsUrl: 'https://maps.google.com/?q=UBS+Cabeceiras+Nova+Lima' },
+            { id: 9, category: 'Saúde', name: 'UBS Honório Bicalho', mapsName: 'UBS Honório Bicalho', address: 'R. Teresópolis, 20 - Honório Bicalho', phone: '(31) 3180-6120', rating: 4.2, reviews: 38, status: 'Pendente', mapsUrl: 'https://maps.google.com/?q=UBS+Honorio+Bicalho+Nova+Lima' },
+            { id: 10, category: 'Saúde', name: 'UBS Jardim da Torre', mapsName: 'Unidade Básica de Saúde - UBS Jardim da Torre', address: 'R. Alameda das Acácias, 100 - Jardim da Torre', phone: '(31) 3180-6130', rating: 4.3, reviews: 17, status: 'Pendente', mapsUrl: 'https://maps.google.com/?q=UBS+Jardim+da+Torre+Nova+Lima' },
+            { id: 11, category: 'Saúde', name: 'Policlínica Municipal', mapsName: 'Policlínica Municipal de Nova Lima', address: 'R. Doutor Lund, 115 - Centro', phone: '(31) 3180-6050', rating: 3.9, reviews: 88, status: 'Pendente', mapsUrl: 'https://maps.google.com/?q=Policlinica+Municipal+Nova+Lima' },
+            { id: 12, category: 'Saúde', name: 'CAPS II (Saúde Mental)', mapsName: 'CAPS II - Nova Lima', address: 'R. Lauro Magalhães Santeiro, 120 - Centro', phone: '(31) 3180-6060', rating: 4.7, reviews: 29, status: 'Pendente', mapsUrl: 'https://maps.google.com/?q=CAPS+II+Nova+Lima' },
+
+            // EDUCAÇÃO
+            { id: 13, category: 'Educação', name: 'E. M. Áurea Lima Taveira', mapsName: 'Escola Municipal Áurea Lima Taveira', address: 'R. José Agostinho, 2335 - Oswaldo Barbosa Pena II', phone: '(31) 3542-6825', rating: 4.6, reviews: 34, status: 'Pendente', mapsUrl: 'https://maps.google.com/?q=Escola+Municipal+Aurea+Lima+Taveira' },
+            { id: 14, category: 'Educação', name: 'E. M. Augusto de Lima', mapsName: 'Escola Municipal Augusto de Lima', address: 'R. Lauro Magalhães Santeiro, 250 - Centro', phone: '(31) 3180-5830', rating: 4.5, reviews: 41, status: 'Pendente', mapsUrl: 'https://maps.google.com/?q=Escola+Municipal+Augusto+de+Lima+Nova+Lima' },
+            { id: 15, category: 'Educação', name: 'E. M. Rubem Costa Lima', mapsName: 'Escola Municipal Rubem Costa Lima', address: 'Alameda dos Mendes, 30 - Macacos', phone: '(31) 3180-5850', rating: 4.8, reviews: 56, status: 'Pendente', mapsUrl: 'https://maps.google.com/?q=Escola+Municipal+Rubem+Costa+Lima' },
+            { id: 16, category: 'Educação', name: 'EMEI Centro', mapsName: 'EMEI Centro - Educação Infantil', address: 'R. Dr. Lund, 55 - Centro', phone: '(31) 3180-5810', rating: 4.7, reviews: 18, status: 'Pendente', mapsUrl: 'https://maps.google.com/?q=EMEI+Centro+Nova+Lima' },
+
+            // ASSISTÊNCIA SOCIAL
+            { id: 17, category: 'Saúde', name: 'CRAS Cruzeiro', mapsName: 'CRAS Cruzeiro', address: 'R. Eugênia Clark, 926 - Vila Marise', phone: '(31) 3542-5684', rating: 4.4, reviews: 22, status: 'Pendente', mapsUrl: 'https://maps.google.com/?q=CRAS+Cruzeiro+Nova+Lima' },
+            { id: 18, category: 'Saúde', name: 'CRAS Nordeste', mapsName: 'CRAS Nordeste', address: 'R. Cardoso, 56 - Honório Bicalho', phone: '(31) 3542-3020', rating: 4.3, reviews: 15, status: 'Pendente', mapsUrl: 'https://maps.google.com/?q=CRAS+Nordeste+Nova+Lima' },
+            { id: 19, category: 'Saúde', name: 'CREAS', mapsName: 'CREAS - Nova Lima', address: 'R. Bias Fortes, 210 - Centro', phone: '(31) 3180-5920', rating: 4.6, reviews: 12, status: 'Pendente', mapsUrl: 'https://maps.google.com/?q=CREAS+Nova+Lima' },
+            {"name":"CRAS Centro","mapsName":"CRAS Centro - Nova Lima","address":"Rua Domingos Rodrigues, 199 - Centro","phone":"(31) 3547-4790 / 3180-5946 / 3180-5947 / 98744-2148 / 98006-3495","rating":4.5,"reviews":20,"status":"Pendente","category":"Saúde","mapsUrl":"https://www.google.com/maps/search/?api=1&query=CRAS+Centro+Nova+Lima","id":1001},
+            {"name":"CRAS Noroeste (Jardim Canadá)","mapsName":"CRAS Noroeste - Nova Lima","address":"Rua Heston, 50 - Jardim Canadá","phone":"(31) 3581-3067 / 3180-5718","rating":4.3,"reviews":14,"status":"Pendente","category":"Saúde","mapsUrl":"https://www.google.com/maps/search/?api=1&query=CRAS+Noroeste+Nova+Lima","id":1002},
+            {"name":"CRAS Norte (Cabeceiras)","mapsName":"CRAS Norte - Nova Lima","address":"Rua Tamandaré, 458 - Cabeceiras","phone":"(31) 3180-5865 / 98006-3502","rating":4.4,"reviews":11,"status":"Pendente","category":"Saúde","mapsUrl":"https://www.google.com/maps/search/?api=1&query=CRAS+Norte+Nova+Lima","id":1003},
+            {"name":"CRAS Água Limpa","mapsName":"CRAS Água Limpa - Nova Lima","address":"Avenida dos Juízes, 588 - Balneário Água Limpa","phone":"(31) 98868-8095","rating":4.6,"reviews":8,"status":"Pendente","category":"Saúde","mapsUrl":"https://www.google.com/maps/search/?api=1&query=CRAS+Agua+Limpa+Nova+Lima","id":1004},
+
+            // CULTURA & LAZER
+            { id: 20, category: 'Cultura & Lazer', name: 'Espaço Cultural Piero Garzon Henrique', mapsName: 'Espaço Cultural Piero Garzon Henrique', address: 'Praça Bernardino de Lima, s/n - Centro', phone: '(31) 3180-5760', rating: 4.7, reviews: 95, status: 'Pendente', mapsUrl: 'https://maps.google.com/?q=Espaco+Cultural+Piero+Garzon+Henrique' },
+            { id: 21, category: 'Cultura & Lazer', name: 'Teatro Municipal Manoel Franzen de Lima', mapsName: 'Teatro Municipal Manoel Franzen de Lima', address: 'Praça Bernardino de Lima, s/n - Centro', phone: '(31) 3541-4424', rating: 4.8, reviews: 320, status: 'Pendente', mapsUrl: 'https://maps.google.com/?q=Teatro+Municipal+Manoel+Franzen+de+Lima' },
+            { id: 22, category: 'Cultura & Lazer', name: 'Praça do Bicame', mapsName: 'Praça do Bicame', address: 'R. Domingos Rodrigues, s/n - Centro', phone: '(31) 3180-5760', rating: 4.6, reviews: 410, status: 'Pendente', mapsUrl: 'https://maps.google.com/?q=Praca+do+Bicame+Nova+Lima' },
+            {"id":801,"category":"Cultura & Lazer","name":"Escola Casa Aristides (Centro de Artes)","mapsName":"Casa Aristides","address":"Praça Coronel Aristides, 55 - Centro","phone":"(31) 3180-5859","rating":4.7,"reviews":42,"status":"Pendente","mapsUrl":"https://www.google.com/maps/search/?api=1&query=Casa+Aristides+Nova+Lima"},
+            { id: 23, category: 'Cultura & Lazer', name: 'Parque Natural Municipal Rego dos Carrapatos', mapsName: 'Parque Natural Municipal Rego dos Carrapatos', address: 'R. Joaquim Eloy de Azevedo, 300 - Centro / Retiro', phone: '(31) 3180-5851', rating: 4.6, reviews: 180, status: 'Pendente', mapsUrl: 'https://maps.google.com/?q=Parque+Natural+Municipal+Rego+dos+Carrapatos+Nova+Lima' },
+            { id: 24, category: 'Cultura & Lazer', name: 'Cineminha (Centro Cultural Padre João Marcelino)', mapsName: 'Cineminha - Centro Cultural Padre João Marcelino', address: 'R. Melo Viana, 100 - Centro', phone: '(31) 3180-5856', rating: 4.8, reviews: 35, status: 'Pendente', mapsUrl: 'https://maps.google.com/?q=Rua+Melo+Viana+100+Centro+Nova+Lima' },
+
+            // SEDES ADMINISTRATIVAS
+            { id: 25, category: 'Sedes Administrativas', name: 'Regional Norte (Serena Mall)', mapsName: 'Prefeitura de Nova Lima - Regional Norte', address: 'Rod. Januário Carneiro, 8625 (Serena Mall) Torre 2, 4º andar - Vale do Sereno', phone: '(31) 3180-5923', rating: 4.3, reviews: 45, status: 'Pendente', mapsUrl: 'https://maps.google.com/?q=Serena+Mall+Nova+Lima' },
+            {"id":401,"category":"Sedes Administrativas","name":"Regional Noroeste (Jardim Canadá)","mapsName":"Prefeitura de Nova Lima - Regional Noroeste","address":"Rua Kenon, 95 - Jardim Canadá","phone":"(31) 3541-8962","rating":4.2,"reviews":35,"status":"Pendente","mapsUrl":"https://www.google.com/maps/search/?api=1&query=Regional+Noroeste+Prefeitura+de+Nova+Lima+Jardim+Canada"},
+            {"id":402,"category":"Sedes Administrativas","name":"Regional Nordeste (Honório Bicalho)","mapsName":"Prefeitura de Nova Lima - Regional Nordeste","address":"Rua Natalício de Jesus Carsalade, 358 - Honório Bicalho","phone":"(31) 3547-5040","rating":4.4,"reviews":26,"status":"Pendente","mapsUrl":"https://www.google.com/maps/search/?api=1&query=Regional+Nordeste+Prefeitura+de+Nova+Lima+Honorio+Bicalho"},
+
+            // OUTROS
+            { id: 26, category: 'Outros', name: 'Cemitério Parque - Nova Lima', mapsName: 'Cemitério Parque - Nova Lima', address: 'R. Amélia de Magalhães Pessoa - Centro', phone: '(31) 3180-5760', rating: 4.1, reviews: 48, status: 'Pendente', mapsUrl: 'https://maps.google.com/?q=Cemitério+Parque+-+Nova+Lima' },
+            { id: 27, category: 'Outros', name: 'Cemitério Municipal do Rosário', mapsName: 'Cemitério Municipal do Rosário', address: 'Rua Padre João de Deus, s/n - Rosário', phone: '(31) 3180-5760', rating: 4.0, reviews: 20, status: 'Pendente', mapsUrl: 'https://maps.google.com/?q=Cemitério+do+Rosário+Nova+Lima' },
+            {"id":701,"category":"Outros","name":"Ouvidoria de Nova Lima","mapsName":"Ouvidoria de Nova Lima","address":"R. Scott, 69 A - Centro","phone":"(31) 3180-5870","rating":3.2,"reviews":15,"status":"Pendente","mapsUrl":"https://www.google.com/maps/search/?api=1&query=Ouvidoria+de+Nova+Lima+R.+Scott+69"},
+            {"name":"E. M. José Francisco da Silva","mapsName":"Escola Municipal José Francisco da Silva","address":"Av. Esmeraldas, 59 - Barra do Céu","phone":"(31) 3541-6715","rating":4.8,"reviews":12,"status":"Pendente","category":"Educação","mapsUrl":"https://www.google.com/maps/search/?api=1&query=Escola+Municipal+Jos%C3%A9+Francisco+da+Silva+Nova+Lima","id":300},
+            {"name":"E. M. Ana do Nascimento Souza","mapsName":"Escola Ana do Nascimento Souza de Educação Especial","address":"R. Poços de Caldas, 285 - Campo do Pires","phone":"(31) 3180-5840","rating":4.7,"reviews":14,"status":"Pendente","category":"Educação","mapsUrl":"https://www.google.com/maps/search/?api=1&query=Escola+Ana+do+Nascimento+Souza+Nova+Lima","id":301},
+            {"name":"E. M. Benvinda Pinto Rocha","mapsName":"Escola Municipal Benvinda Pinto Rocha","address":"R. Caledônia, 506 - Jardim Canadá","phone":"(31) 3541-8974","rating":4.5,"reviews":18,"status":"Pendente","category":"Educação","mapsUrl":"https://www.google.com/maps/search/?api=1&query=Escola+Municipal+Benvinda+Pinto+Rocha+Nova+Lima","id":302},
+            {"name":"E. M. Carlos Henrique Roscoe","mapsName":"Escola Municipal Carlos Henrique Roscoe","address":"R. Francisco Rocha, 20 - Retiro","phone":"(31) 3541-2499","rating":4.4,"reviews":16,"status":"Pendente","category":"Educação","mapsUrl":"https://www.google.com/maps/search/?api=1&query=Escola+Municipal+Carlos+Henrique+Roscoe+Nova+Lima","id":303},
+            {"name":"E. M. César Rodrigues","mapsName":"Escola Municipal César Rodrigues","address":"Al. das Azaléias, Lt 08, Qd C - Retiro do Rodeador","phone":"(31) 3541-8516","rating":4.6,"reviews":15,"status":"Pendente","category":"Educação","mapsUrl":"https://www.google.com/maps/search/?api=1&query=Escola+Municipal+C%C3%A9sar+Rodrigues+Nova+Lima","id":304},
+            {"name":"E. M. Cristiano Machado","mapsName":"Escola Municipal Cristiano Machado","address":"R. Madre Tereza, 391 - Centro","phone":"(31) 3542-5588","rating":4.6,"reviews":29,"status":"Pendente","category":"Educação","mapsUrl":"https://www.google.com/maps/search/?api=1&query=Escola+Municipal+Cristiano+Machado+Nova+Lima","id":305},
+            {"name":"E. M. Dalva Cifuentes Gonçalves","mapsName":"Escola Municipal Dalva Cifuentes Gonçalves","address":"R. Jardim, 10 - Honório Bicalho","phone":"(31) 3541-3940","rating":4.5,"reviews":21,"status":"Pendente","category":"Educação","mapsUrl":"https://www.google.com/maps/search/?api=1&query=Escola+Municipal+Dalva+Cifuentes+Gon%C3%A7alves+Nova+Lima","id":306},
+            {"name":"E. M. David Finlay","mapsName":"Escola Municipal David Finlay","address":"Rodovia MG-030, km 437 - Galo","phone":"(31) 3583-1141","rating":4.7,"reviews":10,"status":"Pendente","category":"Educação","mapsUrl":"https://www.google.com/maps/search/?api=1&query=Escola+Municipal+David+Finlay+Nova+Lima","id":307},
+            {"name":"E. M. Dulce Santos Jones","mapsName":"Escola Municipal Dulce Santos Jones","address":"R. Sete, 40 - Santa Rita","phone":"(31) 3180-5800","rating":4.5,"reviews":14,"status":"Pendente","category":"Educação","mapsUrl":"https://www.google.com/maps/search/?api=1&query=Escola+Municipal+Dulce+Santos+Jones+Nova+Lima","id":308},
+            {"name":"E. M. Emília de Lima / George Chalmers","mapsName":"Escola Municipal George Chalmers","address":"R. Rosa Tofanelli Otero, s/n - Retiro","phone":"(31) 3541-7080","rating":4.6,"reviews":32,"status":"Pendente","category":"Educação","mapsUrl":"https://www.google.com/maps/search/?api=1&query=Escola+Municipal+George+Chalmers+Nova+Lima","id":309},
+            {"name":"E. M. Florie Wanderley Dias","mapsName":"Escola Municipal Florie Wanderley Dias","address":"R. Princesa Isabel, 120 - Vila São José","phone":"(31) 3180-5800","rating":4.6,"reviews":11,"status":"Pendente","category":"Educação","mapsUrl":"https://www.google.com/maps/search/?api=1&query=Escola+Municipal+Florie+Wanderley+Dias+Nova+Lima","id":310},
+            {"name":"E. M. Harold Jones","mapsName":"Escola Municipal Harold Jones","address":"R. Doutor Lund, 529 - Vila Aparecida","phone":"(31) 3180-5800","rating":4.5,"reviews":19,"status":"Pendente","category":"Educação","mapsUrl":"https://www.google.com/maps/search/?api=1&query=Escola+Municipal+Harold+Jones+Nova+Lima","id":311},
+            {"name":"E. M. José Brasil Dias","mapsName":"Escola Municipal José Brasil Dias","address":"R. Emanuel, 145 - Vale da Esperança","phone":"(31) 3180-5800","rating":4.7,"reviews":13,"status":"Pendente","category":"Educação","mapsUrl":"https://www.google.com/maps/search/?api=1&query=Escola+Municipal+Jos%C3%A9+Brasil+Dias+Nova+Lima","id":312},
+            {"name":"E. M. Martha Drummond Fonseca","mapsName":"Escola Municipal Martha Drummond Fonseca","address":"R. José Agostinho, 2335 - Oswaldo Barbosa Pena II","phone":"(31) 3180-5800","rating":4.6,"reviews":25,"status":"Pendente","category":"Educação","mapsUrl":"https://www.google.com/maps/search/?api=1&query=Escola+Municipal+Martha+Drummond+Fonseca+Nova+Lima","id":313},
+            {"name":"E. M. Urcino do Nascimento","mapsName":"Escola Municipal Urcino do Nascimento","address":"Av. dos Bancários, 31 - Balneário Água Limpa","phone":"(31) 98006-2846","rating":4.7,"reviews":12,"status":"Pendente","category":"Educação","mapsUrl":"https://www.google.com/maps/search/?api=1&query=Escola+Municipal+Urcino+do+Nascimento+Nova+Lima","id":314},
+            {"name":"E. M. Vera Wanderley Dias","mapsName":"Escola Municipal Vera Wanderley Dias","address":"R. José Joaquim de Souza, 80 - Mingu","phone":"(31) 3542-8002","rating":4.5,"reviews":17,"status":"Pendente","category":"Educação","mapsUrl":"https://www.google.com/maps/search/?api=1&query=Escola+Municipal+Vera+Wanderley+Dias+Nova+Lima","id":315},
+            {"name":"E. M. Vicente Estêvão dos Santos","mapsName":"Escola Municipal Vicente Estêvão dos Santos","address":"R. José de Oliveira, 1320 - Bela Fama","phone":"(31) 3542-4864","rating":4.6,"reviews":20,"status":"Pendente","category":"Educação","mapsUrl":"https://www.google.com/maps/search/?api=1&query=Escola+Municipal+Vicente+Est%C3%AAv%C3%A3o+Nova+Lima","id":316},
+            {"name":"E. M. Dona Antonieta Dias de Souza","mapsName":"Escola Municipal Dona Antonieta Dias de Souza","address":"R. Curitiba, 23 - Chácara dos Cristais","phone":"(31) 3180-5800","rating":4.4,"reviews":15,"status":"Pendente","category":"Educação","mapsUrl":"https://www.google.com/maps/search/?api=1&query=Escola+Municipal+Dona+Antonieta+Dias+de+Souza+Nova+Lima","id":317},
+            {"name":"CEI Doutor Cássio Magnani","mapsName":"Centro de Educação Infantil Professor Cássio Magnani","address":"R. Yuri, 65 - Jardim Canadá","phone":"(31) 3581-3521","rating":4.8,"reviews":14,"status":"Pendente","category":"Educação","mapsUrl":"https://www.google.com/maps/search/?api=1&query=CEI+Professor+C%C3%A1ssio+Magnani+Nova+Lima","id":318},
+            {"name":"CEI Nancy Romani Duarte","mapsName":"Centro de Educação Infantil Nancy Romani Duarte","address":"R. Seis, 40 - Oswaldo Barbosa Pena","phone":"(31) 3542-3077","rating":4.7,"reviews":16,"status":"Pendente","category":"Educação","mapsUrl":"https://www.google.com/maps/search/?api=1&query=CEI+Nancy+Romani+Duarte+Nova+Lima","id":319},
+            {"name":"CEI Nize Conceição Silva Ribeiro","mapsName":"Centro de Educação Infantil Nize Conceição Silva Ribeiro","address":"R. Mara Núbia Gonçalves Lopes, 35 - Honório Bicalho","phone":"(31) 3542-5209","rating":4.6,"reviews":11,"status":"Pendente","category":"Educação","mapsUrl":"https://www.google.com/maps/search/?api=1&query=CEI+Nize+Concei%C3%A7%C3%A3o+Silva+Ribeiro+Nova+Lima","id":320},
+            {"name":"CEI Olga Ramos da Cruz","mapsName":"Centro de Educação Infantil Olga Ramos da Cruz","address":"Balneário Água Limpa","phone":"(31) 3180-6142","rating":4.7,"reviews":9,"status":"Pendente","category":"Educação","mapsUrl":"https://www.google.com/maps/search/?api=1&query=CEI+Olga+Ramos+da+Cruz+Nova+Lima","id":321},
+            {"name":"Escola Municipal de Música José Acácio da Silva (Zé Fuzil)","mapsName":"Escola Municipal de Música Zé Fuzil","address":"Rua Melo Viana, 120 - Centro","phone":"(31) 3180-5856","rating":4.9,"reviews":28,"status":"Pendente","category":"Cultura & Lazer","mapsUrl":"https://www.google.com/maps/search/?api=1&query=Escola+de+M%C3%BAsica+Z%C3%A9+Fuzil+Nova+Lima","id":322},
+            {"name":"Biblioteca Pública Municipal Anésia de Matos Guimarães","mapsName":"Biblioteca Pública Municipal Anésia de Matos Guimarães","address":"Av. Rio Branco, 289 - Centro","phone":"(31) 3541-4395 / 3180-5869","rating":3.6,"reviews":7,"status":"Pendente","category":"Cultura & Lazer","mapsUrl":"https://www.google.com/maps/search/?api=1&query=Biblioteca+P%C3%BAblica+Municipal+Nova+Lima","id":323},
+            {"category":"Saúde","name":"Ambulatório de Doenças Crônicas","mapsName":"Não cadastrado","address":"Nova Lima - MG","phone":"(31) 3180-6051","rating":null,"reviews":0,"status":"Não cadastrado","mapsUrl":"https://www.google.com/maps/search/?api=1&query=Ambulat%C3%B3rio%20de%20Doen%C3%A7as%20Cr%C3%B4nicas%20Nova%20Lima%20MG","id":28},
+            {"category":"Saúde","name":"Ambulatório de Feridas Complexas","mapsName":"Não cadastrado","address":"Nova Lima - MG","phone":"(31) 3180-6200","rating":null,"reviews":0,"status":"Não cadastrado","mapsUrl":"https://www.google.com/maps/search/?api=1&query=Ambulat%C3%B3rio%20de%20Feridas%20Complexas%20Nova%20Lima%20MG","id":29},
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            {"category":"Saúde","name":"Centro de Atenção Psicossocial (CAPS II)","mapsName":"Não cadastrado","address":"Nova Lima - MG","phone":"(31) 3180-6096","rating":null,"reviews":0,"status":"Não cadastrado","mapsUrl":"https://www.google.com/maps/search/?api=1&query=Centro%20de%20Aten%C3%A7%C3%A3o%20Psicossocial%20(CAPS%20II)%20Nova%20Lima%20MG","id":40},
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            {"category":"Sedes Administrativas","name":"Controladoria Geral do Município","mapsName":"Não cadastrado","address":"Nova Lima - MG","phone":"(31) 3180-6109","rating":null,"reviews":0,"status":"Não cadastrado","mapsUrl":"https://www.google.com/maps/search/?api=1&query=Controladoria%20Geral%20do%20Munic%C3%ADpio%20Nova%20Lima%20MG","id":51},
+            {"category":"Outros","name":"Coordenadoria de Atenção, Proteção e Bem-Estar Animal","mapsName":"Não cadastrado","address":"Nova Lima - MG","phone":"(31) 3180-5845","rating":null,"reviews":0,"status":"Não cadastrado","mapsUrl":"https://www.google.com/maps/search/?api=1&query=Coordenadoria%20de%20Aten%C3%A7%C3%A3o%2C%20Prote%C3%A7%C3%A3o%20e%20Bem-Estar%20Animal%20Nova%20Lima%20MG","id":52},
+            {"category":"Outros","name":"Coordenadoria de Atenção, Proteção e Bem-Estar dos animais (Causa Animal)","mapsName":"Não cadastrado","address":"Nova Lima - MG","phone":"(31) 3180-5845","rating":null,"reviews":0,"status":"Não cadastrado","mapsUrl":"https://www.google.com/maps/search/?api=1&query=Coordenadoria%20de%20Aten%C3%A7%C3%A3o%2C%20Prote%C3%A7%C3%A3o%20e%20Bem-Estar%20dos%20animais%20(Causa%20Animal)%20Nova%20Lima%20MG","id":53},
+            {"category":"Outros","name":"CPP Centro","mapsName":"Não cadastrado","address":"Nova Lima - MG","phone":"(31) 3180-6021","rating":null,"reviews":0,"status":"Não cadastrado","mapsUrl":"https://www.google.com/maps/search/?api=1&query=CPP%20Centro%20Nova%20Lima%20MG","id":54},
+            {"category":"Outros","name":"CPP Jardim Canadá","mapsName":"Não cadastrado","address":"Nova Lima - MG","phone":"(31) 3180-5732","rating":null,"reviews":0,"status":"Não cadastrado","mapsUrl":"https://www.google.com/maps/search/?api=1&query=CPP%20Jardim%20Canad%C3%A1%20Nova%20Lima%20MG","id":55},
+            
+            
+            
+            
+            
+            
+            {"category":"Outros","name":"Desenvolvimento Profissional","mapsName":"Não cadastrado","address":"Nova Lima - MG","phone":"(31) 3180-5887","rating":null,"reviews":0,"status":"Não cadastrado","mapsUrl":"https://www.google.com/maps/search/?api=1&query=Desenvolvimento%20Profissional%20Nova%20Lima%20MG","id":62},
+            {"category":"Outros","name":"DPRE","mapsName":"Não cadastrado","address":"Nova Lima - MG","phone":"(31) 3180-5796","rating":null,"reviews":0,"status":"Não cadastrado","mapsUrl":"https://www.google.com/maps/search/?api=1&query=DPRE%20Nova%20Lima%20MG","id":63},
+            {"category":"Outros","name":"DVRI/RN (IPTU, ITBI e Dívida Ativa, Taxas)","mapsName":"Não cadastrado","address":"Nova Lima - MG","phone":"(31) 3180-5715","rating":null,"reviews":0,"status":"Não cadastrado","mapsUrl":"https://www.google.com/maps/search/?api=1&query=DVRI%2FRN%20(IPTU%2C%20ITBI%20e%20D%C3%ADvida%20Ativa%2C%20Taxas)%20Nova%20Lima%20MG","id":64},
+            {"category":"Outros","name":"DVRM/RN (Nota Fiscal, ISS, Abertura de Empresas)","mapsName":"Não cadastrado","address":"Nova Lima - MG","phone":"(31) 3180-5700","rating":null,"reviews":0,"status":"Não cadastrado","mapsUrl":"https://www.google.com/maps/search/?api=1&query=DVRM%2FRN%20(Nota%20Fiscal%2C%20ISS%2C%20Abertura%20de%20Empresas)%20Nova%20Lima%20MG","id":65},
+            {"category":"Outros","name":"DVRM/Sede","mapsName":"Não cadastrado","address":"Nova Lima - MG","phone":"(31) 3180-5798","rating":null,"reviews":0,"status":"Não cadastrado","mapsUrl":"https://www.google.com/maps/search/?api=1&query=DVRM%2FSede%20Nova%20Lima%20MG","id":66},
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            {"category":"Educação","name":"Educação Ambiental (CEA) - Meio Ambiente","mapsName":"Não cadastrado","address":"Nova Lima - MG","phone":"(31) 3180-5854","rating":null,"reviews":0,"status":"Não cadastrado","mapsUrl":"https://www.google.com/maps/search/?api=1&query=Educa%C3%A7%C3%A3o%20Ambiental%20(CEA)%20-%20Meio%20Ambiente%20Nova%20Lima%20MG","id":88},
+            {"category":"Saúde","name":"Equipe Volante de Macacos - Desenvolv. Social","mapsName":"Não cadastrado","address":"Nova Lima - MG","phone":"(31) 98006-4205","rating":null,"reviews":0,"status":"Não cadastrado","mapsUrl":"https://www.google.com/maps/search/?api=1&query=Equipe%20Volante%20de%20Macacos%20-%20Desenvolv.%20Social%20Nova%20Lima%20MG","id":89},
+            
+            
+            {"category":"Saúde","name":"Escritório de Transformação Social","mapsName":"Não cadastrado","address":"Nova Lima - MG","phone":"(31) 97168-1506","rating":null,"reviews":0,"status":"Não cadastrado","mapsUrl":"https://www.google.com/maps/search/?api=1&query=Escrit%C3%B3rio%20de%20Transforma%C3%A7%C3%A3o%20Social%20Nova%20Lima%20MG","id":92},
+            
+            
+            
+            
+            {"category":"Saúde","name":"Farmácia Municipal - UBS Paula Fernandes Vilela","mapsName":"Não cadastrado","address":"Nova Lima - MG","phone":"(31) 3180-6199","rating":null,"reviews":0,"status":"Não cadastrado","mapsUrl":"https://www.google.com/maps/search/?api=1&query=Farm%C3%A1cia%20Municipal%20-%20UBS%20Paula%20Fernandes%20Vilela%20Nova%20Lima%20MG","id":97},
+            
+            
+            
+            {"category":"Sedes Administrativas","name":"Fazenda Regional Nordeste (IPTU, ITBI e Dívida Ativa)","mapsName":"Não cadastrado","address":"Nova Lima - MG","phone":"(31) 3180- 6114","rating":null,"reviews":0,"status":"Não cadastrado","mapsUrl":"https://www.google.com/maps/search/?api=1&query=Fazenda%20Regional%20Nordeste%20(IPTU%2C%20ITBI%20e%20D%C3%ADvida%20Ativa)%20Nova%20Lima%20MG","id":101},
+            {"category":"Sedes Administrativas","name":"Fiscalização Regional - Jardim Canadá","mapsName":"Não cadastrado","address":"Nova Lima - MG","phone":"(31) 3180-5702","rating":null,"reviews":0,"status":"Não cadastrado","mapsUrl":"https://www.google.com/maps/search/?api=1&query=Fiscaliza%C3%A7%C3%A3o%20Regional%20-%20Jardim%20Canad%C3%A1%20Nova%20Lima%20MG","id":102},
+            
+            {"category":"Outros","name":"Núcleo de Assistência Jurídica - NAJ","mapsName":"Não cadastrado","address":"Nova Lima - MG","phone":"(31) 3542-5900","rating":null,"reviews":0,"status":"Não cadastrado","mapsUrl":"https://www.google.com/maps/search/?api=1&query=N%C3%BAcleo%20de%20Assist%C3%AAncia%20Jur%C3%ADdica%20-%20NAJ%20Nova%20Lima%20MG","id":104},
+            
+            
+            
+            
+            {"category":"Saúde","name":"Ponto de Apoio à Estratégia de Saúde da Família Boa Vista","mapsName":"Não cadastrado","address":"Nova Lima - MG","phone":"(31) 3180-6056","rating":null,"reviews":0,"status":"Não cadastrado","mapsUrl":"https://www.google.com/maps/search/?api=1&query=Ponto%20de%20Apoio%20%C3%A0%20Estrat%C3%A9gia%20de%20Sa%C3%BAde%20da%20Fam%C3%ADlia%20Boa%20Vista%20Nova%20Lima%20MG","id":109},
+            
+            
+            {"category":"Sedes Administrativas","name":"Procuradoria Geral do Município","mapsName":"Não cadastrado","address":"Nova Lima - MG","phone":"(31) 3180-5754","rating":null,"reviews":0,"status":"Não cadastrado","mapsUrl":"https://www.google.com/maps/search/?api=1&query=Procuradoria%20Geral%20do%20Munic%C3%ADpio%20Nova%20Lima%20MG","id":112},
+            {"category":"Outros","name":"Recursos Vegetais","mapsName":"Não cadastrado","address":"Nova Lima - MG","phone":"(31) 3180-5842","rating":null,"reviews":0,"status":"Não cadastrado","mapsUrl":"https://www.google.com/maps/search/?api=1&query=Recursos%20Vegetais%20Nova%20Lima%20MG","id":113},
+            
+            
+            {"category":"Sedes Administrativas","name":"Regional Norte (Unidade Vila da Serra)","mapsName":"Não cadastrado","address":"Nova Lima - MG","phone":"(31) 3180-5923","rating":null,"reviews":0,"status":"Não cadastrado","mapsUrl":"https://www.google.com/maps/search/?api=1&query=Regional%20Norte%20(Unidade%20Vila%20da%20Serra)%20Nova%20Lima%20MG","id":116},
+            {"category":"Saúde","name":"Sala de Vacina Municipal","mapsName":"Não cadastrado","address":"Nova Lima - MG","phone":"(31) 98835-1093","rating":null,"reviews":0,"status":"Não cadastrado","mapsUrl":"https://www.google.com/maps/search/?api=1&query=Sala%20de%20Vacina%20Municipal%20Nova%20Lima%20MG","id":117},
+            
+            {"category":"Outros","name":"Sala Verde Lélia Lobo - Meio Ambiente","mapsName":"Não cadastrado","address":"Nova Lima - MG","phone":"(31) 3180-5852","rating":null,"reviews":0,"status":"Não cadastrado","mapsUrl":"https://www.google.com/maps/search/?api=1&query=Sala%20Verde%20L%C3%A9lia%20Lobo%20-%20Meio%20Ambiente%20Nova%20Lima%20MG","id":119},
+            {"category":"Sedes Administrativas","name":"Secretaria de Administração","mapsName":"Não cadastrado","address":"Nova Lima - MG","phone":"(31) 3180-5772","rating":null,"reviews":0,"status":"Não cadastrado","mapsUrl":"https://www.google.com/maps/search/?api=1&query=Secretaria%20de%20Administra%C3%A7%C3%A3o%20Nova%20Lima%20MG","id":120},
+            
+            
+            
+            
+            {"category":"Sedes Administrativas","name":"Secretaria de Política Urbana","mapsName":"Não cadastrado","address":"Nova Lima - MG","phone":"(31) 3180-5786","rating":null,"reviews":0,"status":"Não cadastrado","mapsUrl":"https://www.google.com/maps/search/?api=1&query=Secretaria%20de%20Pol%C3%ADtica%20Urbana%20Nova%20Lima%20MG","id":125},
+            
+            {"category":"Saúde","name":"Serviço Integrado de Assistência à Saúde do Servidor (SIASS)","mapsName":"Não cadastrado","address":"Nova Lima - MG","phone":"(31) 3180-5833","rating":null,"reviews":0,"status":"Não cadastrado","mapsUrl":"https://www.google.com/maps/search/?api=1&query=Servi%C3%A7o%20Integrado%20de%20Assist%C3%AAncia%20%C3%A0%20Sa%C3%BAde%20do%20Servidor%20(SIASS)%20Nova%20Lima%20MG","id":127},
+            {"category":"Cultura & Lazer","name":"Turismo","mapsName":"Não cadastrado","address":"Nova Lima - MG","phone":"(31) 3180-5875","rating":null,"reviews":0,"status":"Não cadastrado","mapsUrl":"https://www.google.com/maps/search/?api=1&query=Turismo%20Nova%20Lima%20MG","id":128},
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+        ];
+
+        let filteredUnits = [...unitsData];
+        let currentCategory = 'ALL';
+        let sortDirection = {};
+
+        // Atualizar Métricas do Cabeçalho
+        function updateHeaderMetrics() {
+            const mappedUnits = unitsData.filter(u => u.status !== 'Não cadastrado');
+            const total = mappedUnits.length;
+            const pending = unitsData.filter(u => u.status === 'Pendente').length;
+            const notMapped = unitsData.filter(u => u.status === 'Não cadastrado').length;
+            const ratedUnits = mappedUnits.filter(u => u.rating !== null && u.rating > 0);
+            const sumRating = ratedUnits.reduce((acc, curr) => acc + curr.rating, 0);
+            const avg = ratedUnits.length > 0 ? (sumRating / ratedUnits.length).toFixed(1) : '0.0';
+            const categories = new Set(mappedUnits.map(u => u.category));
+
+            document.getElementById('total-units-count').innerText = total;
+            document.getElementById('pending-claims').innerText = pending;
+            document.getElementById('avg-rating').innerText = avg + ' ★';
+            document.getElementById('categories-count').innerText = categories.size;
+        }
+
+        // Renderizar Abas de Categoria Dinamicamente
+        function renderCategoryTabs() {
+            const tabsContainer = document.getElementById('category-tabs');
+            const statusVal = document.getElementById('status-filter').value;
+            
+            // Base de dados considerada para as abas (se 'ALL', considera apenas as cadastradas)
+            const activePool = statusVal === 'Não cadastrado' 
+                ? unitsData.filter(u => u.status === 'Não cadastrado')
+                : unitsData.filter(u => u.status !== 'Não cadastrado');
+
+            const categories = [...new Set(activePool.map(u => u.category))];
+            
+            let html = `
+                <button data-category="ALL" class="cat-tab px-4 py-2 rounded-xl text-sm font-semibold whitespace-nowrap transition-all ${currentCategory === 'ALL' ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-600 hover:bg-slate-100'}">
+                    Todas (${activePool.length})
+                </button>
+            `;
+
+            categories.forEach(cat => {
+                const count = activePool.filter(u => u.category === cat).length;
+                const isActive = currentCategory === cat;
+                html += `
+                    <button data-category="${cat}" class="cat-tab px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all ${isActive ? 'bg-blue-600 text-white shadow-sm font-semibold' : 'text-slate-600 hover:bg-slate-100'}">
+                        ${cat} (${count})
+                    </button>
+                `;
+            });
+
+            tabsContainer.innerHTML = html;
+
+            // Reatachar eventos aos botões criados
+            tabsContainer.querySelectorAll('.cat-tab').forEach(tab => {
+                tab.addEventListener('click', (e) => {
+                    currentCategory = e.currentTarget.getAttribute('data-category');
+                    renderCategoryTabs();
+                    filterData();
+                });
+            });
+        }
+
+        // Renderizar Telefones em lista vertical
+        function renderPhones(phoneStr) {
+            if (!phoneStr) return '<span class="text-slate-400 italic">Sem telefone</span>';
+            const numbers = phoneStr.split(/[\/;,\n]+/).map(p => p.trim()).filter(Boolean);
+            if (numbers.length === 0) return '<span class="text-slate-400 italic">Sem telefone</span>';
+
+            return `<div class="flex flex-col gap-1">` +
+                numbers.map(num => `
+                    <div class="inline-flex items-center gap-1.5 whitespace-nowrap">
+                        <i class="fa-solid fa-phone text-slate-400 text-[10px]"></i>
+                        <span>${num}</span>
+                    </div>
+                `).join('') +
+                `</div>`;
+        }
+        function renderStars(rating) {
+            const fullStars = Math.floor(rating);
+            const hasHalf = rating % 1 >= 0.5;
+            let starsHtml = '';
+            
+            for (let i = 0; i < fullStars; i++) {
+                starsHtml += '<i class="fa-solid fa-star star-rating"></i>';
+            }
+            if (hasHalf) {
+                starsHtml += '<i class="fa-solid fa-star-half-stroke star-rating"></i>';
+            }
+            const emptyStars = 5 - Math.ceil(rating);
+            for (let i = 0; i < emptyStars; i++) {
+                starsHtml += '<i class="fa-regular fa-star text-slate-300"></i>';
+            }
+            return starsHtml;
+        }
+
+        // Renderizar Tabela
+        function renderTable(data) {
+            const tbody = document.getElementById('units-table-body');
+            const emptyState = document.getElementById('empty-state');
+            tbody.innerHTML = '';
+
+            if (data.length === 0) {
+                emptyState.classList.remove('hidden');
+                return;
+            } else {
+                emptyState.classList.add('hidden');
+            }
+
+            data.forEach(unit => {
+                const tr = document.createElement('tr');
+                tr.className = 'table-row-hover transition-colors border-b border-slate-100';
+
+                tr.innerHTML = `
+                    <td class="py-4 px-6">
+                        <div class="font-bold text-slate-800">${unit.name}</div>
+                    </td>
+                    <td class="py-4 px-6 text-slate-700 font-medium">
+                        ${unit.mapsName}
+                    </td>
+                    <td class="py-4 px-6 text-slate-500 text-xs leading-relaxed max-w-xs">
+                        <i class="fa-solid fa-location-dot text-slate-400 mr-1"></i> ${unit.address}
+                    </td>
+                    <td class="py-4 px-6 text-slate-600 text-xs">
+                        ${renderPhones(unit.phone)}
+                    </td>
+                    <td class="py-4 px-6 whitespace-nowrap">
+                        ${unit.rating !== null ? `
+                        <div class="flex items-center gap-1.5">
+                            <span class="font-bold text-slate-800">${Number(unit.rating).toFixed(1)}</span>
+                            <div class="text-xs">${renderStars(unit.rating)}</div>
+                            <span class="text-xs text-slate-400">(${unit.reviews})</span>
+                        </div>` : `<span class="text-xs text-slate-400 italic">Sem avaliação</span>`}
+                    </td>
+                    <td class="py-4 px-6 whitespace-nowrap">
+                        ${unit.status === 'Reivindicado' ? 
+                            `<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                                <i class="fa-solid fa-circle-check"></i> Reivindicado
+                            </span>` : 
+                          unit.status === 'Não cadastrado' ?
+                            `<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-rose-100 text-rose-700 border border-rose-200">
+                                <i class="fa-solid fa-circle-xmark"></i> Não cadastrado
+                            </span>` :
+                            `<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-200">
+                                <i class="fa-solid fa-triangle-exclamation"></i> Pendente
+                            </span>`
+                        }
+                    </td>
+                    <td class="py-4 px-6 text-center whitespace-nowrap">
+                        ${unit.status === 'Não cadastrado' ?
+                            `<a href="${unit.mapsUrl}" target="_blank" rel="noopener noreferrer" 
+                               class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold shadow-sm transition-all hover:shadow" title="Pesquisar / Cadastrar no Google Maps">
+                               CADASTRAR <i class="fa-solid fa-plus text-[10px]"></i>
+                            </a>` :
+                            `<a href="${unit.mapsUrl}" target="_blank" rel="noopener noreferrer" 
+                               class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow-sm transition-all hover:shadow">
+                               LINK <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                            </a>`
+                        }
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            document.getElementById('total-units-count').innerText = data.length;
+        }
+
+        // Filtragem Combinada
+        function filterData() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const statusVal = document.getElementById('status-filter').value;
+            const ratingVal = document.getElementById('rating-filter').value;
+
+            filteredUnits = unitsData.filter(unit => {
+                const matchesCategory = (currentCategory === 'ALL' || unit.category === currentCategory);
+                const matchesSearch = unit.name.toLowerCase().includes(searchTerm) || 
+                                      unit.mapsName.toLowerCase().includes(searchTerm) || 
+                                      unit.address.toLowerCase().includes(searchTerm);
+                
+                // Se o filtro for 'ALL', NÃO mostra as não cadastradas (elas ficam ocultas)
+                let matchesStatus = false;
+                if (statusVal === 'ALL') {
+                    matchesStatus = (unit.status !== 'Não cadastrado');
+                } else {
+                    matchesStatus = (unit.status === statusVal);
+                }
+                
+                let matchesRating = true;
+                if (ratingVal === '4.5') matchesRating = unit.rating >= 4.5;
+                else if (ratingVal === '4.0') matchesRating = unit.rating >= 4.0;
+                else if (ratingVal === '3.0') matchesRating = unit.rating !== null && unit.rating < 4.0;
+
+                return matchesCategory && matchesSearch && matchesStatus && matchesRating;
+            });
+
+            renderTable(filteredUnits);
+        }
+
+        // Ordenação de Colunas
+        function sortTable(key) {
+            sortDirection[key] = !sortDirection[key];
+            const direction = sortDirection[key] ? 1 : -1;
+
+            filteredUnits.sort((a, b) => {
+                if (a[key] < b[key]) return -1 * direction;
+                if (a[key] > b[key]) return 1 * direction;
+                return 0;
+            });
+
+            renderTable(filteredUnits);
+        }
+
+        // Event Listeners
+        document.getElementById('search-input').addEventListener('input', filterData);
+        document.getElementById('status-filter').addEventListener('change', () => {
+            currentCategory = 'ALL';
+            renderCategoryTabs();
+            filterData();
+        });
+        document.getElementById('rating-filter').addEventListener('change', filterData);
+
+        // Botão Limpar Filtros
+        document.getElementById('reset-filters').addEventListener('click', () => {
+            document.getElementById('search-input').value = '';
+            document.getElementById('status-filter').value = 'ALL';
+            document.getElementById('rating-filter').value = 'ALL';
+            currentCategory = 'ALL';
+            renderCategoryTabs();
+            filterData();
+        });
+
+        // Inicializar
+        updateHeaderMetrics();
+        renderCategoryTabs();
+        filterData();
+    </script>
+</body>
+</html>
